@@ -1,0 +1,54 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+model GPTSession {
+  id   String   @id @default(auto()) @map("_id") @db.ObjectId
+  data String[]
+}
+
+model Settings {
+  id     String @id @default(auto()) @map("_id") @db.ObjectId
+  config Json
+  name   String @unique
+}
+
+model User {
+  id            String   @id @default(auto()) @map("_id") @db.ObjectId
+  fullName      String
+  email         String   @unique
+  password      String
+  allergies     String[]
+  preferredFood String[]
+  dislikedFood  String[]
+  typeOfCuisine String[]
+  diet          String[]
+}
+
+model Meal {
+  id          String @id @default(auto()) @map("_id") @db.ObjectId
+  title       String
+  recipe      String
+  ingredients String
+}
+
+model DailySchedule {
+  id               String         @id @default(auto()) @map("_id") @db.ObjectId
+  day              String
+  breakfast        String
+  lunch            String
+  dinner           String
+  weeklySchedule   WeeklySchedule @relation(fields: [weeklyScheduleId], references: [id], onDelete: Cascade)
+  weeklyScheduleId String         @db.ObjectId
+}
+
+model WeeklySchedule {
+  id             String          @id @default(auto()) @map("_id") @db.ObjectId
+  userId         String          @unique
+  dailySchedules DailySchedule[]
+}
